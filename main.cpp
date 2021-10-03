@@ -82,13 +82,22 @@ struct Compare                             //4
 
 struct U
 {
-    float num1 { 0 }, num2 { 0 };
+    float num1 { 0.0f }, num2 { 0.0f };
     float someStaticFunctionCopy(float* floatPtr)      //12
     {
         if (floatPtr != nullptr)
-            while(std::abs(num2 - num1) > 0.001f)
+        {
+            std::cout << "U's num1 value: " << num1 << std::endl;
+            num1 = *floatPtr;
+            std::cout << "U's num1 updated value: " << num1 << std::endl;
+            while( std::abs(num2 - num1) > 0.001f )
+            {
                 num2 += .1f;
-        return num2 * num1;
+            }
+            std::cout << "U's num2 updated value: " << num2 << std::endl;
+            return num2 * num1;
+        }
+        return 0.0f;
     }
 };
 
@@ -96,19 +105,22 @@ struct Static
 {
     static float someStaticFunction(U* that, float* floatPtr)        //10
     {
-        std::cout << "U's num1 value: " << that->num1 << std::endl;
-        if (floatPtr != nullptr)
-            that->num1 = *floatPtr;
-        std::cout << "U's num1 updated value: " << that->num1 << std::endl;
-        while( std::abs(that->num2 - that->num1) > 0.001f )
+        if (that != nullptr && floatPtr != nullptr)
         {
+            std::cout << "U's num1 value: " << that->num1 << std::endl;
+            that->num1 = *floatPtr;
+            std::cout << "U's num1 updated value: " << that->num1 << std::endl;
+            while( std::abs(that->num2 - that->num1) > 0.001f )
+            {
             /*
              write something that makes the distance between that->num2 and that->num1 get smaller
              */
-            that->num2 += .1f;
+                that->num2 += .1f;
+            }
+            std::cout << "U's num2 updated value: " << that->num2 << std::endl;
+            return that->num2 * that->num1;
         }
-        std::cout << "U's num2 updated value: " << that->num2 << std::endl;
-        return that->num2 * that->num1;
+        return 0.0f;
     }
 };
         
