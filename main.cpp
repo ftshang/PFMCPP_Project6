@@ -56,16 +56,10 @@ Purpose:  This project will show you the difference between member functions and
 #include <string>
 struct T
 {
-    T(std::string n, const char* ptr)  //1
-    {
-        if (ptr != nullptr)
-            value = *ptr;
-        else
-            value = 'A';
-        name = n;
-    }
+    T(std::string n, const char* ptr) : value(ptr), name(n) //1
+    {}
     //2
-    char value;
+    const char* value;
     //3 
     std::string name;
 };
@@ -74,8 +68,11 @@ struct Compare                             //4
 {
     T* compare(T* a, T* b) //5
     {
-        if( a->value < b->value ) return a;
-        if( a->value > b->value ) return b;
+        if( a != nullptr && b != nullptr)
+        {
+            if( a->value < b->value ) return a;
+            if (a->value > b->value ) return b;
+        }
         return nullptr;
     }
 };
