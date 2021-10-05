@@ -35,13 +35,14 @@ struct T
 
 struct Compare                             //4
 {
-    T* compare(T* a, T* b) //5
+    T* compare(T* &a, T* &b) //5
     {
-        if( a != nullptr && b != nullptr)
+        if (a != nullptr && b != nullptr)
         {
             if( a->value < b->value ) return a;
             if (a->value > b->value ) return b;
         }
+
         return nullptr;
     }
 };
@@ -49,7 +50,7 @@ struct Compare                             //4
 struct U
 {
     float num1 { 0.0f }, num2 { 0.0f };
-    float someStaticFunctionCopy(float* floatPtr)      //12
+    float someStaticFunctionCopy(const float* &floatPtr)      //12
     {
         if (floatPtr != nullptr)
         {
@@ -69,7 +70,7 @@ struct U
 
 struct Static
 {
-    static float someStaticFunction(U* that, float* floatPtr)        //10
+    static float someStaticFunction(U* &that, const float* &floatPtr)        //10
     {
         if (that != nullptr && floatPtr != nullptr)
         {
@@ -109,17 +110,22 @@ int main()
     T t1("Jack", nullptr);                                             //6
     T t2("Jill", nullptr);                                             //6
     
+    T* ptr1 = &t1;
+    T* ptr2 = &t2;
+
     Compare f;                                            //7
-    auto* smaller = f.compare(&t1, &t2);                              //8
+    auto* smaller = f.compare(ptr1, ptr2);                              //8
     if (smaller != nullptr)
         std::cout << "the smaller one is " << smaller->name << std::endl; //9
     
     U u1;
+    U* ptr3 = &u1;
     float updatedValue = 5.f;
-    std::cout << "[static func] u1's multiplied values: " << Static::someStaticFunction(&u1, &updatedValue) << std::endl;                  //11
+    const float* fltPtr = &updatedValue;
+    std::cout << "[static func] u1's multiplied values: " << Static::someStaticFunction(ptr3, fltPtr) << std::endl;                  //11
     
     U u2;
-    std::cout << "[member func] u2's multiplied values: " << u2.someStaticFunctionCopy(&updatedValue) << std::endl;
+    std::cout << "[member func] u2's multiplied values: " << u2.someStaticFunctionCopy(fltPtr) << std::endl;
 }
 
         
