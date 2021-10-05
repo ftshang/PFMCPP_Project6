@@ -35,13 +35,10 @@ struct T
 
 struct Compare                             //4
 {
-    T* compare(T* a, T* b) //5
+    T* compare(T &a, T &b) //5
     {
-        if( a != nullptr && b != nullptr)
-        {
-            if( a->value < b->value ) return a;
-            if (a->value > b->value ) return b;
-        }
+        if( a.value < b.value ) return &a;
+        if (a.value > b.value ) return &b;
         return nullptr;
     }
 };
@@ -49,45 +46,38 @@ struct Compare                             //4
 struct U
 {
     float num1 { 0.0f }, num2 { 0.0f };
-    float someStaticFunctionCopy(float* floatPtr)      //12
+    float someStaticFunctionCopy(const float &floatRef)      //12
     {
-        if (floatPtr != nullptr)
+        std::cout << "U's num1 value: " << num1 << std::endl;
+        num1 = floatRef;
+        std::cout << "U's num1 updated value: " << num1 << std::endl;
+        while( std::abs(num2 - num1) > 0.001f )
         {
-            std::cout << "U's num1 value: " << num1 << std::endl;
-            num1 = *floatPtr;
-            std::cout << "U's num1 updated value: " << num1 << std::endl;
-            while( std::abs(num2 - num1) > 0.001f )
-            {
-                num2 += .1f;
-            }
-            std::cout << "U's num2 updated value: " << num2 << std::endl;
-            return num2 * num1;
+            num2 += .1f;
         }
-        return 0.0f;
+        std::cout << "U's num2 updated value: " << num2 << std::endl;
+        return num2 * num1;
     }
 };
 
 struct Static
 {
-    static float someStaticFunction(U* that, float* floatPtr)        //10
+    static float someStaticFunction(U &that, const float &floatRef)        //10
     {
-        if (that != nullptr && floatPtr != nullptr)
+        std::cout << "U's num1 value: " << that.num1 << std::endl;
+        that.num1 = floatRef;
+        std::cout << "U's num1 updated value: " << that.num1 << std::endl;
+        while( std::abs(that.num2 - that.num1) > 0.001f )
         {
-            std::cout << "U's num1 value: " << that->num1 << std::endl;
-            that->num1 = *floatPtr;
-            std::cout << "U's num1 updated value: " << that->num1 << std::endl;
-            while( std::abs(that->num2 - that->num1) > 0.001f )
-            {
-            /*
-             write something that makes the distance between that->num2 and that->num1 get smaller
-             */
-                that->num2 += .1f;
-            }
-            std::cout << "U's num2 updated value: " << that->num2 << std::endl;
-            return that->num2 * that->num1;
+        /*
+         write something that makes the distance between that->num2 and that->num1 get smaller
+        */
+            that.num2 += .1f;
         }
-        return 0.0f;
+        std::cout << "U's num2 updated value: " << that.num2 << std::endl;
+        return that.num2 * that.num1;
     }
+
 };
         
 /*
@@ -108,18 +98,18 @@ int main()
 {
     T t1("Jack", nullptr);                                             //6
     T t2("Jill", nullptr);                                             //6
-    
+
     Compare f;                                            //7
-    auto* smaller = f.compare(&t1, &t2);                              //8
+    auto* smaller = f.compare(t1, t2);                              //8
     if (smaller != nullptr)
         std::cout << "the smaller one is " << smaller->name << std::endl; //9
     
     U u1;
-    float updatedValue = 5.f;
-    std::cout << "[static func] u1's multiplied values: " << Static::someStaticFunction(&u1, &updatedValue) << std::endl;                  //11
+    const float updatedValue = 5.f;
+    std::cout << "[static func] u1's multiplied values: " << Static::someStaticFunction(u1, updatedValue) << std::endl;                  //11
     
     U u2;
-    std::cout << "[member func] u2's multiplied values: " << u2.someStaticFunctionCopy(&updatedValue) << std::endl;
+    std::cout << "[member func] u2's multiplied values: " << u2.someStaticFunctionCopy(updatedValue) << std::endl;
 }
 
         
